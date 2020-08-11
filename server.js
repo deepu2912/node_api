@@ -5,7 +5,7 @@ const expressLayouts =  require('express-ejs-layouts');
 
 var cors = require('cors');
 
-app.use(cors());
+app.use(cors())
 
 const indexRouter = require('./routes/index');
 

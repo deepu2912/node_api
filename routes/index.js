@@ -118,4 +118,16 @@ router.get('/queries',(request,res)=>{
 res.send(rawdata)
 })
 
+router.delete('/queries/:index',(req,res)=>{
+  var rawdata =  fs.readFileSync('query.json');
+  rawdata = JSON.parse(rawdata)
+  console.log(rawdata);
+  console.log(req.params.index);
+  rawdata.splice(req.params.index,1)
+  console.log(rawdata);
+  let json = JSON.stringify(rawdata);
+  fs.writeFileSync('query.json', json);
+  res.send("Done")
+})
+
 module.exports = router;

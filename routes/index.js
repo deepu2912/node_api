@@ -5,11 +5,12 @@ const router = express.Router();
 const fs = require('fs');
 const { request } = require('http');
 const { json } = require('express');
+const { strict } = require('assert');
 
 
 
 router.get('/email/:name/:cemail/:cphone/:csubject/:cmessage', (request, res) => {
- 
+
   fs.exists('query.json', function (exists) {
 
     if (exists) {
@@ -23,16 +24,16 @@ router.get('/email/:name/:cemail/:cphone/:csubject/:cmessage', (request, res) =>
           console.log(err);
 
         } else {
-  
+
           var obj = {
             name: request.params.name,
             cemail: request.params.cemail,
             cphone: request.params.cphone,
             csubject: request.params.csubject,
             cmessage: request.params.cmessage,
-            Date : new Date()
+            Date: new Date()
           }
-         
+
           var data2 = JSON.parse(data);
 
           data2.push(obj);
@@ -50,15 +51,15 @@ router.get('/email/:name/:cemail/:cphone/:csubject/:cmessage', (request, res) =>
         cphone: request.params.cphone,
         csubject: request.params.csubject,
         cmessage: request.params.cmessage,
-        Date : new Date()
+        Date: new Date()
       }
 
       var json_Data = [];
-      
+
       json_Data.push(obj)
- 
+
       let json = JSON.stringify(json_Data);
- 
+
       fs.writeFileSync('query.json', json);
     }
   });
@@ -112,18 +113,45 @@ router.get('/email/:name/:cemail/:cphone/:csubject/:cmessage', (request, res) =>
 })
 
 
-router.get('/queries',(request,res)=>{
-  var rawdata =  fs.readFileSync('query.json');
+router.get('/login', (request, res) => {
+  var rawdata = fs.readFileSync('credentials.json');
   rawdata = JSON.parse(rawdata)
-res.send(rawdata)
+  res.send(rawdata)
 })
 
-router.delete('/queries/:index',(req,res)=>{
-  var rawdata =  fs.readFileSync('query.json');
+router.get('/checklogin/:username/:password', (request, res) => {
+  var username = request.params.username;
+  var password = request.params.password;
+
+  var rawdata = fs.readFileSync('credentials.json');
+  rawdata = JSON.parse(rawdata)
+
+  var message = '';
+
+  if (username !== rawdata[0]["username"]) {
+    message = message + 'incorrect username \n';
+  }
+  else if (password !== rawdata[0]["password"]) {
+    message = message + 'incorrect password \n';
+  }
+  else {
+    message = message + 'Success';
+  }
+  res.send(message)
+})
+
+router.get('/queries', (request, res) => {
+  var rawdata = fs.readFileSync('query.json');
+  rawdata = JSON.parse(rawdata)
+  res.send(rawdata)
+})
+
+router.delete('/queries/:index', (req, res) => {
+  var rawdata = fs.readFileSync('query.json');
   rawdata = JSON.parse(rawdata)
   console.log(rawdata);
   console.log(req.params.index);
-  rawdata.splice(req.params.index,1)
+  rawdata.splice(req.params.index, 1)
   console.log(rawdata);
   let json = JSON.stringify(rawdata);
   fs.writeFileSync('query.json', json);
